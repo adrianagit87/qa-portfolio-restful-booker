@@ -42,21 +42,22 @@ Cinco funciones reutilizables:
 
 ---
 
-### 6. Pruebas API (`tests/api/`)
-- **`auth.spec.ts`** — login válido, password incorrecto, body vacío
-- **`rooms.spec.ts`** — GET con validación de schema, POST sin/con token, DELETE
-- **`bookings.spec.ts`** — POST válido/inválido, GET con auth, DELETE, cleanup en `afterEach`
+### 6. Pruebas API (`tests/api/`) — 24 casos
+- **`auth.spec.ts`** (3) — login válido, password incorrecto, body vacío
+- **`rooms.spec.ts`** (10) — GET list + schema, GET por ID, POST sin/con token, POST precio negativo, POST nombre duplicado, DELETE con/sin token
+- **`bookings.spec.ts`** (11) — POST válido/inválido, campos requeridos, fechas borde, GET list/por ID/sin auth, DELETE con/sin token, cleanup en `afterEach`
 
 ---
 
-### 7. Pruebas UI (`tests/ui/`)
-- **`contact.spec.ts`** — formulario completo exitoso, nombre corto, sin email, formulario vacío
-- **`booking.spec.ts`** — selección de fechas en calendario y confirmación de reserva
+### 7. Pruebas UI (`tests/ui/`) — 10 casos
+- **`contact.spec.ts`** (4) — formulario completo exitoso, teléfono inválido, sin email, formulario vacío
+- **`booking.spec.ts`** (2) — flujo end-to-end de reserva con fechas dinámicas y cleanup via API
+- **`cross-validation.spec.ts`** (4) — validación cruzada UI vs API: booking UI→API, delete API→UI, room API→UI, precio API↔UI
 
 ---
 
 ### Verificación final
-Corrí `tsc --noEmit` y el proyecto **compila sin errores**. Todo está listo para ejecutar.
+**34/34 pruebas pasando** · `tsc --noEmit` sin errores de compilación · reporte HTML disponible con `npm run test:report`.
 
 ---
 
@@ -77,12 +78,13 @@ npm run test:report   # Open HTML report
 restful-booker-tests/
 ├── tests/
 │   ├── ui/
-│   │   ├── booking.spec.ts
-│   │   └── contact.spec.ts
+│   │   ├── booking.spec.ts          # 2 tests — flujo end-to-end
+│   │   ├── contact.spec.ts          # 4 tests — formulario de contacto
+│   │   └── cross-validation.spec.ts # 4 tests — consistencia UI vs API
 │   └── api/
-│       ├── auth.spec.ts
-│       ├── rooms.spec.ts
-│       └── bookings.spec.ts
+│       ├── auth.spec.ts             # 3 tests — autenticación
+│       ├── rooms.spec.ts            # 10 tests — CRUD habitaciones
+│       └── bookings.spec.ts         # 11 tests — CRUD reservas
 ├── pages/
 │   ├── HomePage.ts
 │   └── ContactPage.ts
@@ -93,5 +95,6 @@ restful-booker-tests/
 ├── playwright.config.ts
 ├── tsconfig.json
 ├── package.json
+├── CASOS_DE_PRUEBA.md
 └── RESUMEN.md
 ```

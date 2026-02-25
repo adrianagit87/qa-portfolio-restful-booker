@@ -3,8 +3,8 @@
 
 **Aplicación bajo prueba:** https://automationintesting.online
 **Framework:** Playwright + TypeScript
-**Total de casos:** 19
-**Resultado:** ✅ 19/19 pasando
+**Total de casos:** 34
+**Resultado:** ✅ 34/34 pasando
 
 ---
 
@@ -13,10 +13,11 @@
 | Tipo | Archivo | Casos | Estado |
 |------|---------|-------|--------|
 | API | `tests/api/auth.spec.ts` | 3 | ✅ Todos pasan |
-| API | `tests/api/rooms.spec.ts` | 5 | ✅ Todos pasan |
-| API | `tests/api/bookings.spec.ts` | 5 | ✅ Todos pasan |
+| API | `tests/api/rooms.spec.ts` | 10 | ✅ Todos pasan |
+| API | `tests/api/bookings.spec.ts` | 11 | ✅ Todos pasan |
 | UI | `tests/ui/contact.spec.ts` | 4 | ✅ Todos pasan |
 | UI | `tests/ui/booking.spec.ts` | 2 | ✅ Todos pasan |
+| UI + API | `tests/ui/cross-validation.spec.ts` | 4 | ✅ Todos pasan |
 
 ---
 
@@ -128,6 +129,74 @@
 
 ---
 
+### ROOM-006 · Obtener habitación por ID existente
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/rooms.spec.ts` |
+| **Endpoint** | `GET /api/room/:id` |
+| **Tipo** | Positivo |
+| **Precondición** | Al menos una habitación registrada en el sistema |
+| **Pasos** | 1. GET `/api/room` para obtener un ID válido · 2. GET `/api/room/{id}` |
+| **Resultado esperado** | HTTP 200 · body contiene `roomid`, `roomName`, `type`, `roomPrice` |
+| **Resultado obtenido** | ✅ HTTP 200 · schema validado correctamente |
+
+---
+
+### ROOM-007 · Obtener habitación con ID inexistente
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/rooms.spec.ts` |
+| **Endpoint** | `GET /api/room/:id` |
+| **Tipo** | Negativo |
+| **Precondición** | ID `99999` no existe en el sistema |
+| **Pasos** | 1. GET `/api/room/99999` |
+| **Resultado esperado** | Código distinto de 200 (timeout o error documentado) |
+| **Resultado obtenido** | ✅ Comportamiento real documentado: no retorna 200 |
+| **Nota** | La API puede hacer timeout en lugar de retornar 404. El test acepta ambos como comportamiento válido. |
+
+---
+
+### ROOM-008 · Crear habitación con precio negativo
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/rooms.spec.ts` |
+| **Endpoint** | `POST /api/room` |
+| **Tipo** | Negativo / Validación |
+| **Precondición** | Token admin válido |
+| **Pasos** | 1. POST con `roomPrice: -50` en el body |
+| **Resultado esperado** | Código distinto de 200 (rechazo de datos inválidos) |
+| **Resultado obtenido** | ✅ Precio negativo rechazado correctamente |
+
+---
+
+### ROOM-009 · Crear habitación con nombre duplicado
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/rooms.spec.ts` |
+| **Endpoint** | `POST /api/room` |
+| **Tipo** | Borde / Comportamiento real |
+| **Precondición** | Token admin · primera habitación creada via helper |
+| **Pasos** | 1. Crear habitación con nombre único · 2. POST con el mismo `roomName` |
+| **Resultado esperado** | HTTP 200 (duplicados permitidos) o HTTP 409 (duplicados rechazados) |
+| **Resultado obtenido** | ✅ Comportamiento documentado · cleanup ejecutado en ambos casos |
+| **Cleanup** | `afterEach` elimina todas las habitaciones creadas incluyendo duplicados |
+
+---
+
+### ROOM-010 · Eliminar habitación sin autenticación
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/rooms.spec.ts` |
+| **Endpoint** | `DELETE /api/room/:id` |
+| **Tipo** | Negativo / Seguridad |
+| **Precondición** | Token admin · habitación previamente creada |
+| **Pasos** | 1. Crear habitación con token · 2. DELETE sin enviar cookie de autenticación |
+| **Resultado esperado** | HTTP 401 Unauthorized |
+| **Resultado obtenido** | ✅ HTTP 401 · recurso protegido correctamente |
+| **Cleanup** | Habitación eliminada con token válido tras el test |
+
+---
+
 ### BOOK-001 · Crear reserva con datos válidos
 | Campo | Detalle |
 |-------|---------|
@@ -191,6 +260,86 @@
 | **Pasos** | 1. Crear reserva · 2. DELETE `/api/booking/{bookingid}` con token |
 | **Resultado esperado** | HTTP 200 |
 | **Resultado obtenido** | ✅ HTTP 200 · reserva eliminada |
+
+---
+
+### BOOK-006 · Crear reserva sin firstname
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/bookings.spec.ts` |
+| **Endpoint** | `POST /api/booking` |
+| **Tipo** | Negativo / Campo requerido |
+| **Precondición** | Datos válidos excepto `firstname` omitido del body |
+| **Pasos** | 1. POST con todos los campos válidos excepto `firstname` |
+| **Resultado esperado** | Código distinto de 201 (campo requerido rechazado) |
+| **Resultado obtenido** | ✅ Reserva no creada |
+
+---
+
+### BOOK-007 · Crear reserva sin roomid
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/bookings.spec.ts` |
+| **Endpoint** | `POST /api/booking` |
+| **Tipo** | Negativo / Campo requerido |
+| **Precondición** | Datos válidos excepto `roomid` omitido del body |
+| **Pasos** | 1. POST con todos los campos válidos excepto `roomid` |
+| **Resultado esperado** | Código distinto de 201 (campo requerido rechazado) |
+| **Resultado obtenido** | ✅ Reserva no creada |
+
+---
+
+### BOOK-008 · Crear reserva con checkin igual a checkout
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/bookings.spec.ts` |
+| **Endpoint** | `POST /api/booking` |
+| **Tipo** | Negativo / Borde |
+| **Precondición** | `checkin: 2026-11-01` · `checkout: 2026-11-01` (misma fecha) |
+| **Pasos** | 1. POST con fechas iguales en checkin y checkout |
+| **Resultado esperado** | Código distinto de 201 (estancia de 0 noches inválida) |
+| **Resultado obtenido** | ✅ Reserva rechazada correctamente |
+
+---
+
+### BOOK-009 · Obtener reserva por ID con token válido
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/bookings.spec.ts` |
+| **Endpoint** | `GET /api/booking/:id` |
+| **Tipo** | Positivo |
+| **Precondición** | Token admin · reserva creada via helper con fechas 2026-12-01 / 2026-12-05 |
+| **Pasos** | 1. Crear reserva · 2. GET `/api/booking/{bookingid}` con cookie de autenticación |
+| **Resultado esperado** | HTTP 200 |
+| **Resultado obtenido** | ✅ HTTP 200 · reserva retornada correctamente |
+| **Cleanup** | Reserva eliminada tras el test |
+
+---
+
+### BOOK-010 · Obtener reserva con ID inexistente
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/bookings.spec.ts` |
+| **Endpoint** | `GET /api/booking/:id` |
+| **Tipo** | Negativo |
+| **Precondición** | Token admin · ID `99999` no existe |
+| **Pasos** | 1. GET `/api/booking/99999` con cookie de autenticación |
+| **Resultado esperado** | HTTP 404 Not Found |
+| **Resultado obtenido** | ✅ HTTP 404 |
+
+---
+
+### BOOK-011 · Eliminar reserva sin autenticación
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/bookings.spec.ts` |
+| **Endpoint** | `DELETE /api/booking/:id` |
+| **Tipo** | Negativo / Seguridad |
+| **Precondición** | Token admin · reserva previamente creada |
+| **Pasos** | 1. Crear reserva con token · 2. DELETE sin enviar cookie de autenticación |
+| **Resultado esperado** | HTTP 401 Unauthorized |
+| **Resultado obtenido** | ✅ HTTP 401 · recurso protegido correctamente |
+| **Cleanup** | Reserva eliminada con token válido tras el test |
 
 ---
 
@@ -281,6 +430,58 @@
 
 ---
 
+## Pruebas de Validación Cruzada UI vs API
+
+### CROSS-001 · Reserva creada por UI aparece en la API
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/ui/cross-validation.spec.ts` |
+| **Tipo** | Positivo / Consistencia UI→API |
+| **Precondición** | Token admin · Room ID 1 disponible para fechas ~3500 días en el futuro |
+| **Pasos** | 1. Navegar a `/reservation/1?checkin=...&checkout=...` · 2. Llenar y enviar formulario de reserva · 3. Verificar que "Booking Confirmed" sea visible · 4. Consultar `GET /api/booking?roomid=1` · 5. Buscar la reserva por firstname/lastname |
+| **Resultado esperado** | Reserva creada en UI es retornada por la API con firstname "CrossTest" y lastname "UIvsAPI" |
+| **Resultado obtenido** | ✅ Consistencia confirmada — datos creados en UI visibles en API |
+| **Cleanup** | Reserva eliminada vía API tras el test |
+
+---
+
+### CROSS-002 · Reserva eliminada por API desaparece del panel admin UI
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/ui/cross-validation.spec.ts` |
+| **Tipo** | Positivo / Consistencia API→UI |
+| **Precondición** | Token admin · reserva creada via helper (fechas 2027-03-01 / 2027-03-05) |
+| **Pasos** | 1. Crear reserva vía API · 2. DELETE `/api/booking/{id}` con token · 3. Login en `/admin` · 4. Navegar a `/admin/report` · 5. Verificar que el booking ID no aparece |
+| **Resultado esperado** | El ID de la reserva eliminada no es visible en el reporte de administración |
+| **Resultado obtenido** | ✅ Reserva eliminada no aparece en el panel UI |
+
+---
+
+### CROSS-003 · Habitación creada por API aparece en el panel admin UI
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/ui/cross-validation.spec.ts` |
+| **Tipo** | Positivo / Consistencia API→UI |
+| **Precondición** | Token admin |
+| **Pasos** | 1. Crear habitación vía `POST /api/room` · 2. Login en `/admin` · 3. Verificar que el nombre de la habitación aparece en la lista |
+| **Resultado esperado** | `roomName` generado por el helper es visible en el panel de administración |
+| **Resultado obtenido** | ✅ Habitación creada via API visible en UI inmediatamente |
+| **Cleanup** | Habitación eliminada vía API tras el test |
+
+---
+
+### CROSS-004 · Precio de habitación en API coincide con precio mostrado en UI
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/ui/cross-validation.spec.ts` |
+| **Tipo** | Positivo / Consistencia datos API↔UI |
+| **Precondición** | Al menos una habitación registrada con precio > 0 |
+| **Pasos** | 1. GET `/api/room` · 2. Extraer `roomPrice` de la primera habitación · 3. Navegar a `/` · 4. Verificar que el texto `£{roomPrice}` es visible en la página |
+| **Resultado esperado** | Precio retornado por la API coincide exactamente con el precio mostrado en el home |
+| **Resultado obtenido** | ✅ Precio consistente entre API y UI |
+
+---
+
 ## Patrones y decisiones de diseño
 
 ### Page Object Model (POM)
@@ -300,7 +501,11 @@ Los tests de UI no interactúan con el DOM directamente. Toda la lógica de sele
 ### Cleanup y aislamiento
 - Tests de API: usan `afterEach` para eliminar recursos creados durante el test
 - Tests de UI (booking): usan `afterEach` con el fixture `request` de Playwright para eliminar reservas vía API, evitando contaminación entre corridas
+- Tests de cross-validation: cleanup inline al final de cada test
 - Fechas dinámicas en tests de booking UI: generadas con semilla de timestamp (3000+ días) para garantizar disponibilidad en entorno compartido
+
+### Validación cruzada UI vs API
+`tests/ui/cross-validation.spec.ts` contiene pruebas híbridas que combinan el fixture `request` (API) con el fixture `page` (browser) para verificar la consistencia de datos entre capas. Se ubica en `tests/ui/` para ejecutarse con el proyecto `chromium` de Playwright, que es el único que provee ambos fixtures simultáneamente.
 
 ### Hallazgos del entorno real
 Durante la implementación se identificaron diferencias entre la documentación del plan y el comportamiento real de la API:

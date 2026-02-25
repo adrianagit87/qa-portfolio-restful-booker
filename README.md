@@ -21,10 +21,10 @@ Demostrar amplitud QA aplicada a un proyecto real:
 
 | Métrica | Valor |
 |---------|-------|
-| Total de tests automatizados | 19 |
-| Tests de API | 13 |
-| Tests de UI (Chromium) | 6 |
-| Tasa de éxito | 19/19 — 100% ✅ |
+| Total de tests automatizados | 34 |
+| Tests de API | 24 |
+| Tests de UI (Chromium) | 10 |
+| Tasa de éxito | 34/34 — 100% ✅ |
 | Tiempo de ejecución en CI | ~12 minutos |
 | Bugs documentados | 7 |
 | Casos de prueba manuales | 53 |
@@ -50,30 +50,29 @@ Demostrar amplitud QA aplicada a un proyecto real:
 qa-portfolio-restful-booker/
 ├── .github/
 │   └── workflows/
-│       └── playwright.yml       # Pipeline CI/CD
+│       └── playwright.yml            # Pipeline CI/CD
 ├── docs/
-│   ├── test-plan.md             # Estrategia y alcance
-│   ├── risk-analysis.md         # Análisis de riesgos
-│   ├── test-cases/
-│   │   ├── web-test-cases.md    # 25 casos de prueba UI
-│   │   └── api-test-cases.md    # 28 casos de prueba API
-│   └── bug-reports/
-│       └── bug-reports.md       # 7 bugs documentados
+│   ├── test-plan.md                  # Estrategia y alcance
+│   ├── web-test-cases.md             # Casos de prueba UI manuales
+│   ├── api-test-cases.md             # Casos de prueba API manuales
+│   └── bug-reports.md                # 7 bugs documentados con severidad
 ├── tests/
 │   ├── ui/
-│   │   ├── booking.spec.ts      # Flujo de reserva E2E
-│   │   └── contact.spec.ts      # Formulario de contacto
+│   │   ├── booking.spec.ts           # 2 tests — flujo de reserva E2E
+│   │   ├── contact.spec.ts           # 4 tests — formulario de contacto
+│   │   └── cross-validation.spec.ts  # 4 tests — consistencia UI vs API
 │   └── api/
-│       ├── auth.spec.ts         # Autenticación
-│       ├── rooms.spec.ts        # CRUD habitaciones
-│       └── bookings.spec.ts     # CRUD reservas
+│       ├── auth.spec.ts              # 3 tests — autenticación
+│       ├── rooms.spec.ts             # 10 tests — CRUD habitaciones
+│       └── bookings.spec.ts          # 11 tests — CRUD reservas
 ├── pages/
-│   ├── HomePage.ts              # Page Object — reserva
-│   └── ContactPage.ts           # Page Object — contacto
+│   ├── HomePage.ts                   # Page Object — reserva
+│   └── ContactPage.ts                # Page Object — contacto
 ├── fixtures/
-│   └── test-data.ts             # Datos de prueba centralizados
+│   └── test-data.ts                  # Datos de prueba centralizados
 ├── helpers/
-│   └── api.helpers.ts           # Helpers reutilizables de API
+│   └── api.helpers.ts                # Helpers reutilizables de API
+├── CASOS_DE_PRUEBA.md                # Reporte completo de 34 casos
 ├── playwright.config.ts
 ├── package.json
 └── README.md
@@ -119,9 +118,10 @@ npm run test:report
 | Documento | Descripción |
 |-----------|-------------|
 | [Test Plan](docs/test-plan.md) | Estrategia, alcance, riesgos y criterios de calidad |
-| [Casos de prueba — Web](docs/test-cases/web-test-cases.md) | 25 casos UI: navegación, contacto, reserva, admin |
-| [Casos de prueba — API](docs/test-cases/api-test-cases.md) | 28 casos API: auth, rooms, bookings, validación cruzada |
-| [Reporte de bugs](docs/bug-reports/bug-reports.md) | 7 bugs de contrato API documentados con severidad |
+| [Casos de prueba — Web](docs/web-test-cases.md) | Casos UI manuales: navegación, contacto, reserva, admin |
+| [Casos de prueba — API](docs/api-test-cases.md) | Casos API manuales: auth, rooms, bookings |
+| [Reporte de bugs](docs/bug-reports.md) | 7 bugs de contrato API documentados con severidad |
+| [Tests automatizados](CASOS_DE_PRUEBA.md) | 34 casos automatizados con resultado y cleanup |
 
 ---
 
