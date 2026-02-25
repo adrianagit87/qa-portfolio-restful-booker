@@ -1,0 +1,1 @@
+[![Playwright Tests](https://github.com/adrianagit87/qa-portfolio-restful-booker/actions/workflows/playwright.yml/badge.svg)](https://github.com/adrianagit87/qa-portfolio-restful-booker/actions/workflows/playwright.yml)
