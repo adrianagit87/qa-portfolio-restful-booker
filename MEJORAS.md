@@ -158,7 +158,7 @@ await test.step('Verify confirmation heading', async () => { ... });
 | # | Mejora | Impacto en portafolio | Dificultad | Estado |
 |---|--------|----------------------|------------|--------|
 | 001 | Screenshot del reporte en README | 🔴 Alto | Baja | ✅ Completado |
-| 002 | GIF de tests corriendo | 🔴 Alto | Baja | ⏳ Pendiente (manual) |
+| 002 | GIF de tests corriendo | 🔴 Alto | Baja | ✅ Completado |
 | 003 | Tests negativos UI | 🟠 Medio | Media | ✅ Completado |
 | 004 | `roomid` dinámico | 🟠 Medio | Media | ✅ Completado |
 | 005 | PUT booking | 🟡 Bajo-medio | Baja | ✅ Completado |
