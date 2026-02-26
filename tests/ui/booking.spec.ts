@@ -117,12 +117,15 @@ test.describe('Booking widget — UI tests', () => {
 
   test('UI-BOOKING-003 · booking on already-occupied dates → error message visible', async ({ request }) => {
     let blockingBookingId: number | null = null;
+    let blockedCheckin: string;
+    let blockedCheckout: string;
+    let token: string;
 
     await test.step('Block the dates via API', async () => {
-      const token = await getAuthToken(request);
+      token = await getAuthToken(request);
       const seed = Math.floor(Date.now() / 1000) % 1000;
-      const blockedCheckin  = futureDate(3020 + seed);
-      const blockedCheckout = futureDate(3023 + seed);
+      blockedCheckin  = futureDate(3020 + seed);
+      blockedCheckout = futureDate(3023 + seed);
 
       const booking = await createBooking(request, {
         firstname: 'Blocker',
@@ -133,32 +136,33 @@ test.describe('Booking widget — UI tests', () => {
         bookingdates: { checkin: blockedCheckin, checkout: blockedCheckout },
       });
       blockingBookingId = booking['bookingid'] as number;
-
-      await test.step('Navigate to the same dates via UI', async () => {
-        await homePage.gotoReservation(roomId, blockedCheckin, blockedCheckout);
-      });
-
-      await test.step('Attempt to open booking form', async () => {
-        await homePage.openBookingForm();
-      });
-
-      await test.step('Fill guest details and submit', async () => {
-        await homePage.fillBookingForm({
-          firstname: 'Conflict',
-          lastname: 'Guest',
-          email: 'conflict@example.com',
-          phone: '01234567890',
-        });
-        await homePage.submitBooking();
-      });
-
-      await test.step('Verify error — no confirmation heading shown', async () => {
-        await expect(homePage.confirmationHeading).not.toBeVisible({ timeout: 5_000 });
-      });
-
-      if (blockingBookingId) {
-        await deleteBooking(request, token, blockingBookingId).catch(() => {});
-      }
     });
+
+    await test.step('Navigate to the same dates via UI', async () => {
+      await homePage.gotoReservation(roomId, blockedCheckin, blockedCheckout);
+    });
+
+    await test.step('Attempt to open booking form', async () => {
+      await homePage.openBookingForm();
+    });
+
+    await test.step('Fill guest details and submit', async () => {
+      await homePage.fillBookingForm({
+        firstname: 'Conflict',
+        lastname: 'Guest',
+        email: 'conflict@example.com',
+        phone: '01234567890',
+      });
+      await homePage.submitBooking();
+    });
+
+    await test.step('Verify error — no confirmation heading shown', async () => {
+      await expect(homePage.confirmationHeading).not.toBeVisible({ timeout: 5_000 });
+    });
+
+    // Cleanup
+    if (blockingBookingId) {
+      await deleteBooking(request, token!, blockingBookingId).catch(() => {});
+    }
   });
 });

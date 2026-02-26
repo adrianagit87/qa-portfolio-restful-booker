@@ -1,5 +1,5 @@
 import { test, expect } from '@playwright/test';
-import { getAuthToken, createBooking, deleteBooking, createRoom, deleteRoom } from '../../helpers/api.helpers';
+import { getAuthToken, createBooking, deleteBooking, createRoom, deleteRoom, getFirstAvailableRoomId } from '../../helpers/api.helpers';
 import { VALID_BOOKING } from '../../fixtures/test-data';
 
 /**
@@ -10,6 +10,11 @@ import { VALID_BOOKING } from '../../fixtures/test-data';
 
 test.describe('Cross-validation — UI vs API consistency', () => {
   let token: string;
+  let roomId: number;
+
+  test.beforeAll(async ({ request }) => {
+    roomId = await getFirstAvailableRoomId(request);
+  });
 
   test.beforeEach(async ({ request }) => {
     token = await getAuthToken(request);
@@ -23,7 +28,7 @@ test.describe('Cross-validation — UI vs API consistency', () => {
     const checkout = baseDate.toISOString().split('T')[0];
 
     // Create booking via UI
-    await page.goto(`/reservation/1?checkin=${checkin}&checkout=${checkout}`);
+    await page.goto(`/reservation/${roomId}?checkin=${checkin}&checkout=${checkout}`);
     await page.getByRole('button', { name: 'Reserve Now' }).first().click();
     await page.getByPlaceholder('Firstname').fill('CrossTest');
     await page.getByPlaceholder('Lastname').fill('UIvsAPI');
@@ -33,7 +38,7 @@ test.describe('Cross-validation — UI vs API consistency', () => {
     await expect(page.getByRole('heading', { name: 'Booking Confirmed' })).toBeVisible({ timeout: 10000 });
 
     // Verify booking appears in API
-    const apiResponse = await request.get('/api/booking?roomid=1', {
+    const apiResponse = await request.get(`/api/booking?roomid=${roomId}`, {
       headers: { Cookie: `token=${token}` },
     });
     expect(apiResponse.status()).toBe(200);

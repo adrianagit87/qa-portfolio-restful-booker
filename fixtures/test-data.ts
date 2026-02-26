@@ -53,11 +53,3 @@ export const VALID_CONTACT = {
   subject: 'Test enquiry about rooms',
   message: 'Hello, I would like to know more about room availability for next month.',
 };
-
-export const INVALID_CONTACT = {
-  shortName: 'Al',                // < 3 chars
-  noEmail: '',
-  validPhone: '01234567890',
-  validSubject: 'Test subject line',
-  validMessage: 'This is a valid message with enough characters to pass validation.',
-};

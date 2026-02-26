@@ -10,10 +10,10 @@
     "allure:generate": "npx allure generate allure-results --clean -o allure-report",
     "allure:open": "npx allure open allure-report"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "keywords": ["qa", "playwright", "typescript", "api-testing", "e2e", "portfolio", "restful-booker"],
+  "author": "Adriana Troche <https://www.linkedin.com/in/adriana-troche-robles>",
+  "license": "MIT",
+  "description": "QA Portfolio — automated API & UI tests for Restful-Booker Platform using Playwright + TypeScript",
   "devDependencies": {
     "@playwright/test": "^1.58.2",
     "@types/node": "^25.3.0",

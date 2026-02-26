@@ -37,11 +37,8 @@ export class ContactPage {
 
   async goto() {
     await this.page.goto('/');
-    await this.page.waitForLoadState('networkidle');
-    // Scroll the contact section into view
-    await this.page.evaluate(() =>
-      document.querySelector('#contact')?.scrollIntoView({ behavior: 'instant' })
-    );
+    // Scroll the contact section into view once the form is in the DOM
+    await this.nameInput.scrollIntoViewIfNeeded();
     await this.nameInput.waitFor({ state: 'visible', timeout: 10_000 });
   }
 

@@ -40,8 +40,8 @@ Este proyecto forma parte de un portafolio QA profesional que demuestra la aplic
 Se aplica un modelo de **pirámide de pruebas**: mayor cobertura en API (más rápidas, más estables) y pruebas UI focalizadas en flujos end-to-end críticos.
 
 ```
-        [UI E2E]          ← 6 tests — flujos críticos del usuario final
-      [API Tests]         ← 13 tests — contratos, validaciones, seguridad
+        [UI E2E]          ← 11 tests — flujos críticos + validación cruzada
+      [API Tests]         ← 28 tests — contratos, validaciones, seguridad
    [Exploración manual]   ← flujos no automatizados, edge cases, UX
 ```
 
@@ -113,22 +113,23 @@ Todos los datos de prueba están centralizados en `fixtures/test-data.ts`. No se
 
 | Métrica | Valor actual |
 |---------|-------------|
-| Total de casos de prueba | 19 |
-| Casos automatizados | 19 |
-| Casos manuales documentados | En progreso |
-| Tests API | 13 (68%) |
-| Tests UI | 6 (32%) |
-| Tasa de éxito última ejecución | 19/19 — 100% ✅ |
+| Total de casos de prueba | 39 |
+| Casos automatizados | 39 |
+| Casos manuales documentados | 53 |
+| Tests API | 28 (72%) |
+| Tests UI (Chromium) | 11 (28%) |
+| Tasa de éxito última ejecución | 39/39 — 100% ✅ |
 
 ### Distribución por tipo
 
 | Tipo | Cantidad |
 |------|----------|
-| Positivos | 11 |
-| Negativos | 6 |
+| Positivos | 18 |
+| Negativos | 13 |
 | Schema / Contrato | 1 |
-| Seguridad básica | 2 |
-| E2E (UI) | 2 |
+| Seguridad básica | 5 |
+| E2E (UI) | 3 |
+| Validación cruzada UI↔API | 4 |
 
 ### Reporte de resultados
 - **Reporte automático:** Playwright HTML Report — generado en cada ejecución de CI/CD
@@ -155,12 +156,13 @@ Durante la implementación se identificaron diferencias entre la documentación 
 ## 6. Entregables
 
 - [x] Test Plan (`docs/test-plan.md`)
-- [ ] Casos de prueba manuales — Web (`docs/test-cases/web-test-cases.md`)
-- [ ] Casos de prueba manuales — API (`docs/test-cases/api-test-cases.md`)
-- [ ] Reporte de bugs (`docs/bug-reports/`)
+- [x] Casos de prueba manuales — Web (`docs/web-test-cases.md`)
+- [x] Casos de prueba manuales — API (`docs/api-test-cases.md`)
+- [x] Reporte de bugs (`docs/bug-reports.md`)
 - [x] Suite de automatización Playwright + TypeScript (`tests/`)
-- [ ] Pipeline CI/CD (`.github/workflows/playwright.yml`)
+- [x] Pipeline CI/CD (`.github/workflows/playwright.yml`)
 - [x] Reporte HTML de resultados
+- [x] Reporte Allure publicado en GitHub Pages
 
 ---
 

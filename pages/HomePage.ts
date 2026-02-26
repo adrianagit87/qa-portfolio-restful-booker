@@ -38,7 +38,7 @@ export class HomePage {
    */
   async gotoReservation(roomId = 1, checkin = '2026-06-10', checkout = '2026-06-13') {
     await this.page.goto(`/reservation/${roomId}?checkin=${checkin}&checkout=${checkout}`);
-    await this.page.waitForLoadState('networkidle');
+    await this.reserveNowButton.first().waitFor({ state: 'visible', timeout: 15_000 });
   }
 
   /**
