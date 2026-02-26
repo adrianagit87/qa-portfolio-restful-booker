@@ -21,10 +21,10 @@ Demostrar amplitud QA aplicada a un proyecto real:
 
 | Métrica | Valor |
 |---------|-------|
-| Total de tests automatizados | 34 |
-| Tests de API | 24 |
-| Tests de UI (Chromium) | 10 |
-| Tasa de éxito | 34/34 — 100% ✅ |
+| Total de tests automatizados | 39 |
+| Tests de API | 28 |
+| Tests de UI (Chromium) | 11 |
+| Tasa de éxito | 39/39 — 100% ✅ |
 | Tiempo de ejecución en CI | ~12 minutos |
 | Bugs documentados | 7 |
 | Casos de prueba manuales | 53 |
@@ -58,13 +58,13 @@ qa-portfolio-restful-booker/
 │   └── bug-reports.md                # 7 bugs documentados con severidad
 ├── tests/
 │   ├── ui/
-│   │   ├── booking.spec.ts           # 2 tests — flujo de reserva E2E
+│   │   ├── booking.spec.ts           # 3 tests — flujo E2E + caso negativo
 │   │   ├── contact.spec.ts           # 4 tests — formulario de contacto
 │   │   └── cross-validation.spec.ts  # 4 tests — consistencia UI vs API
 │   └── api/
 │       ├── auth.spec.ts              # 3 tests — autenticación
-│       ├── rooms.spec.ts             # 10 tests — CRUD habitaciones
-│       └── bookings.spec.ts          # 11 tests — CRUD reservas
+│       ├── rooms.spec.ts             # 12 tests — CRUD habitaciones
+│       └── bookings.spec.ts          # 13 tests — CRUD reservas
 ├── pages/
 │   ├── HomePage.ts                   # Page Object — reserva
 │   └── ContactPage.ts                # Page Object — contacto
