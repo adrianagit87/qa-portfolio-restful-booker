@@ -19,6 +19,23 @@ export async function getAuthToken(request: APIRequestContext): Promise<string> 
 }
 
 /**
+ * Returns the roomid of the first available room in the system.
+ * Useful for tests that need a valid roomid without hardcoding one.
+ */
+export async function getFirstAvailableRoomId(request: APIRequestContext): Promise<number> {
+  const response = await request.get('/api/room');
+  if (!response.ok()) {
+    throw new Error(`getFirstAvailableRoomId failed: ${response.status()}`);
+  }
+  const body = await response.json() as { rooms: Array<{ roomid: number }> };
+  const first = body.rooms[0];
+  if (!first) {
+    throw new Error('getFirstAvailableRoomId: no rooms found in the system');
+  }
+  return first.roomid;
+}
+
+/**
  * Creates a room via the API.
  * POST /api/room returns {"success":true} — no roomid in response.
  * We fetch the full room list after creation and find the room by name.

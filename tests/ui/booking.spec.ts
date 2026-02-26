@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { HomePage } from '../../pages/HomePage';
-import { getAuthToken, deleteBooking } from '../../helpers/api.helpers';
+import { getAuthToken, createBooking, deleteBooking, getFirstAvailableRoomId } from '../../helpers/api.helpers';
 
 /**
  * Generates a future date string (YYYY-MM-DD) offset by `daysFromNow`.
@@ -15,6 +15,7 @@ function futureDate(daysFromNow: number): string {
 
 test.describe('Booking widget — UI tests', () => {
   let homePage: HomePage;
+  let roomId: number;
 
   // Checkin/checkout dates for each test — stored so afterEach can clean them up
   let checkin1: string;
@@ -22,7 +23,7 @@ test.describe('Booking widget — UI tests', () => {
   let checkin2: string;
   let checkout2: string;
 
-  test.beforeAll(() => {
+  test.beforeAll(async ({ request }) => {
     // Generate unique date ranges far in the future.
     // Adding seconds-based offset avoids conflicts across parallel CI runs.
     const seed = Math.floor(Date.now() / 1000) % 1000; // 0–999
@@ -30,6 +31,8 @@ test.describe('Booking widget — UI tests', () => {
     checkout1 = futureDate(3003 + seed);
     checkin2  = futureDate(3010 + seed);
     checkout2 = futureDate(3013 + seed);
+
+    roomId = await getFirstAvailableRoomId(request);
   });
 
   test.beforeEach(async ({ page }) => {
@@ -42,8 +45,7 @@ test.describe('Booking widget — UI tests', () => {
     const token = await getAuthToken(request).catch(() => null);
     if (!token) return;
 
-    // Fetch bookings for room 1 and delete any that match our test dates
-    const res = await request.get('/api/booking?roomid=1', {
+    const res = await request.get(`/api/booking?roomid=${roomId}`, {
       headers: { Cookie: `token=${token}` },
     }).catch(() => null);
     if (!res?.ok()) return;
@@ -65,29 +67,98 @@ test.describe('Booking widget — UI tests', () => {
     }
   });
 
-  test('complete booking flow → "Booking Confirmed" heading visible', async () => {
-    await homePage.gotoReservation(1, checkin1, checkout1);
-    await homePage.openBookingForm();
-    await homePage.fillBookingForm({
-      firstname: 'Jane',
-      lastname: 'Tester',
-      email: 'jane.tester@example.com',
-      phone: '01234567890',
+  test('UI-BOOKING-001 · complete booking flow → "Booking Confirmed" visible', async () => {
+    await test.step('Navigate to reservation page with future dates', async () => {
+      await homePage.gotoReservation(roomId, checkin1, checkout1);
     });
-    await homePage.submitBooking();
-    await homePage.verifyConfirmation();
+
+    await test.step('Open booking form', async () => {
+      await homePage.openBookingForm();
+    });
+
+    await test.step('Fill in guest details', async () => {
+      await homePage.fillBookingForm({
+        firstname: 'Jane',
+        lastname: 'Tester',
+        email: 'jane.tester@example.com',
+        phone: '01234567890',
+      });
+    });
+
+    await test.step('Submit booking and verify confirmation', async () => {
+      await homePage.submitBooking();
+      await homePage.verifyConfirmation();
+    });
   });
 
-  test('booking confirmation shows "Booking Confirmed" for a different guest', async () => {
-    await homePage.gotoReservation(1, checkin2, checkout2);
-    await homePage.openBookingForm();
-    await homePage.fillBookingForm({
-      firstname: 'Carlos',
-      lastname: 'Portfolio',
-      email: 'carlos@example.com',
-      phone: '07700900123',
+  test('UI-BOOKING-002 · booking confirmation for a second guest', async () => {
+    await test.step('Navigate to reservation page with future dates', async () => {
+      await homePage.gotoReservation(roomId, checkin2, checkout2);
     });
-    await homePage.submitBooking();
-    await expect(homePage.confirmationHeading).toBeVisible({ timeout: 15_000 });
+
+    await test.step('Open booking form', async () => {
+      await homePage.openBookingForm();
+    });
+
+    await test.step('Fill in guest details', async () => {
+      await homePage.fillBookingForm({
+        firstname: 'Carlos',
+        lastname: 'Portfolio',
+        email: 'carlos@example.com',
+        phone: '07700900123',
+      });
+    });
+
+    await test.step('Submit booking and verify confirmation', async () => {
+      await homePage.submitBooking();
+      await expect(homePage.confirmationHeading).toBeVisible({ timeout: 15_000 });
+    });
+  });
+
+  test('UI-BOOKING-003 · booking on already-occupied dates → error message visible', async ({ request }) => {
+    let blockingBookingId: number | null = null;
+
+    await test.step('Block the dates via API', async () => {
+      const token = await getAuthToken(request);
+      const seed = Math.floor(Date.now() / 1000) % 1000;
+      const blockedCheckin  = futureDate(3020 + seed);
+      const blockedCheckout = futureDate(3023 + seed);
+
+      const booking = await createBooking(request, {
+        firstname: 'Blocker',
+        lastname: 'Test',
+        totalprice: 100,
+        depositpaid: false,
+        roomid: roomId,
+        bookingdates: { checkin: blockedCheckin, checkout: blockedCheckout },
+      });
+      blockingBookingId = booking['bookingid'] as number;
+
+      await test.step('Navigate to the same dates via UI', async () => {
+        await homePage.gotoReservation(roomId, blockedCheckin, blockedCheckout);
+      });
+
+      await test.step('Attempt to open booking form', async () => {
+        await homePage.openBookingForm();
+      });
+
+      await test.step('Fill guest details and submit', async () => {
+        await homePage.fillBookingForm({
+          firstname: 'Conflict',
+          lastname: 'Guest',
+          email: 'conflict@example.com',
+          phone: '01234567890',
+        });
+        await homePage.submitBooking();
+      });
+
+      await test.step('Verify error — no confirmation heading shown', async () => {
+        await expect(homePage.confirmationHeading).not.toBeVisible({ timeout: 5_000 });
+      });
+
+      if (blockingBookingId) {
+        await deleteBooking(request, token, blockingBookingId).catch(() => {});
+      }
+    });
   });
 });

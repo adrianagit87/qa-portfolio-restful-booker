@@ -1,10 +1,10 @@
 export const ADMIN_CREDENTIALS = {
-  username: 'admin',
-  password: 'password',
+  username: process.env['ADMIN_USERNAME'] ?? 'admin',
+  password: process.env['ADMIN_PASSWORD'] ?? 'password',
 };
 
 export const INVALID_CREDENTIALS = {
-  username: 'admin',
+  username: process.env['ADMIN_USERNAME'] ?? 'admin',
   password: 'wrongpassword',
 };
 

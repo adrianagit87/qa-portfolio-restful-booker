@@ -1,4 +1,9 @@
 import { defineConfig, devices } from '@playwright/test';
+import { config } from 'dotenv';
+
+config(); // loads .env if present; no-op if file doesn't exist
+
+const BASE_URL = process.env['BASE_URL'] ?? 'https://automationintesting.online';
 
 export default defineConfig({
   testDir: './tests',
@@ -9,7 +14,7 @@ export default defineConfig({
   reporter: [['html'], ['list']],
 
   use: {
-    baseURL: 'https://automationintesting.online',
+    baseURL: BASE_URL,
     trace: 'on-first-retry',
   },
 
@@ -22,10 +27,7 @@ export default defineConfig({
     {
       name: 'api',
       testMatch: 'tests/api/**/*.spec.ts',
-      use: {
-        // No browser needed for API tests
-        baseURL: 'https://automationintesting.online',
-      },
+      use: { baseURL: BASE_URL },
     },
   ],
 });
