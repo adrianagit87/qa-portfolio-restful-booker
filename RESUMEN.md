@@ -29,35 +29,36 @@ Credenciales admin, datos válidos/inválidos de booking, y datos del formulario
 ---
 
 ### 4. Helpers de API (`helpers/api.helpers.ts`)
-Cinco funciones reutilizables:
-- `getAuthToken()` — hace POST /api/auth y devuelve el token
+Seis funciones reutilizables:
+- `getAuthToken()` — hace POST /api/auth/login y devuelve el token
+- `getFirstAvailableRoomId()` — consulta GET /api/room y retorna el primer roomid disponible (elimina dependencia de roomid hardcodeado)
 - `createRoom()` / `deleteRoom()` — con cookie de autenticación
 - `createBooking()` / `deleteBooking()` — para el CRUD de reservas
 
 ---
 
 ### 5. Page Object Model (`pages/`)
-- **`HomePage.ts`** — encapsula abrir el widget de reserva, seleccionar fechas en el calendario (drag & drop), llenar el formulario y verificar confirmación
+- **`HomePage.ts`** — encapsula navegación a la página de reserva, apertura del formulario, llenado de datos del huésped y verificación de confirmación
 - **`ContactPage.ts`** — encapsula llenar el formulario de contacto, enviarlo y verificar mensajes de éxito o errores de validación
 
 ---
 
-### 6. Pruebas API (`tests/api/`) — 24 casos
+### 6. Pruebas API (`tests/api/`) — 28 casos
 - **`auth.spec.ts`** (3) — login válido, password incorrecto, body vacío
-- **`rooms.spec.ts`** (10) — GET list + schema, GET por ID, POST sin/con token, POST precio negativo, POST nombre duplicado, DELETE con/sin token
-- **`bookings.spec.ts`** (11) — POST válido/inválido, campos requeridos, fechas borde, GET list/por ID/sin auth, DELETE con/sin token, cleanup en `afterEach`
+- **`rooms.spec.ts`** (12) — GET list + schema, GET por ID, POST sin/con token, POST precio negativo, POST nombre duplicado, PUT con/sin token, DELETE con/sin token
+- **`bookings.spec.ts`** (13) — POST válido/inválido, campos requeridos, fechas borde, GET list/por ID/sin auth, PUT con/sin token, DELETE con/sin token, cleanup en `afterEach`
 
 ---
 
-### 7. Pruebas UI (`tests/ui/`) — 10 casos
+### 7. Pruebas UI (`tests/ui/`) — 11 casos
 - **`contact.spec.ts`** (4) — formulario completo exitoso, teléfono inválido, sin email, formulario vacío
-- **`booking.spec.ts`** (2) — flujo end-to-end de reserva con fechas dinámicas y cleanup via API
+- **`booking.spec.ts`** (3) — flujo end-to-end positivo (2 huéspedes) + caso negativo (fechas ocupadas), fechas dinámicas, cleanup via API, `test.step()` para trazabilidad
 - **`cross-validation.spec.ts`** (4) — validación cruzada UI vs API: booking UI→API, delete API→UI, room API→UI, precio API↔UI
 
 ---
 
 ### Verificación final
-**34/34 pruebas pasando** · `tsc --noEmit` sin errores de compilación · reporte HTML disponible con `npm run test:report`.
+**39/39 pruebas pasando** · `tsc --noEmit` sin errores de compilación · reporte HTML disponible con `npm run test:report`.
 
 ---
 
@@ -78,13 +79,13 @@ npm run test:report   # Open HTML report
 restful-booker-tests/
 ├── tests/
 │   ├── ui/
-│   │   ├── booking.spec.ts          # 2 tests — flujo end-to-end
+│   │   ├── booking.spec.ts          # 3 tests — flujo E2E + caso negativo
 │   │   ├── contact.spec.ts          # 4 tests — formulario de contacto
 │   │   └── cross-validation.spec.ts # 4 tests — consistencia UI vs API
 │   └── api/
 │       ├── auth.spec.ts             # 3 tests — autenticación
-│       ├── rooms.spec.ts            # 10 tests — CRUD habitaciones
-│       └── bookings.spec.ts         # 11 tests — CRUD reservas
+│       ├── rooms.spec.ts            # 12 tests — CRUD habitaciones
+│       └── bookings.spec.ts         # 13 tests — CRUD reservas
 ├── pages/
 │   ├── HomePage.ts
 │   └── ContactPage.ts
