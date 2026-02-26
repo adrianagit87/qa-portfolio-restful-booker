@@ -17,6 +17,14 @@ Demostrar amplitud QA aplicada a un proyecto real:
 
 ---
 
+## 📈 Reporte Allure
+
+[![Allure Report](docs/assets/allure-report.png)](https://adrianagit87.github.io/qa-portfolio-restful-booker/allure-report)
+
+> 🔗 [Ver reporte interactivo en vivo](https://adrianagit87.github.io/qa-portfolio-restful-booker/allure-report)
+
+---
+
 ## 📊 Métricas del proyecto
 
 | Métrica | Valor |
