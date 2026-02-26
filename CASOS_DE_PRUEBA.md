@@ -3,8 +3,8 @@
 
 **Aplicación bajo prueba:** https://automationintesting.online
 **Framework:** Playwright + TypeScript
-**Total de casos:** 34
-**Resultado:** ✅ 34/34 pasando
+**Total de casos:** 39
+**Resultado:** ✅ 39/39 pasando
 
 ---
 
@@ -13,10 +13,10 @@
 | Tipo | Archivo | Casos | Estado |
 |------|---------|-------|--------|
 | API | `tests/api/auth.spec.ts` | 3 | ✅ Todos pasan |
-| API | `tests/api/rooms.spec.ts` | 10 | ✅ Todos pasan |
-| API | `tests/api/bookings.spec.ts` | 11 | ✅ Todos pasan |
+| API | `tests/api/rooms.spec.ts` | 12 | ✅ Todos pasan |
+| API | `tests/api/bookings.spec.ts` | 13 | ✅ Todos pasan |
 | UI | `tests/ui/contact.spec.ts` | 4 | ✅ Todos pasan |
-| UI | `tests/ui/booking.spec.ts` | 2 | ✅ Todos pasan |
+| UI | `tests/ui/booking.spec.ts` | 3 | ✅ Todos pasan |
 | UI + API | `tests/ui/cross-validation.spec.ts` | 4 | ✅ Todos pasan |
 
 ---
@@ -183,6 +183,35 @@
 
 ---
 
+### ROOM-011 · Actualizar habitación con token válido
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/rooms.spec.ts` |
+| **Endpoint** | `PUT /api/room/:id` |
+| **Tipo** | Positivo |
+| **Precondición** | Token admin · habitación previamente creada |
+| **Pasos** | 1. Crear habitación · 2. PUT `/api/room/{id}` con token y datos actualizados (`roomPrice: 200`) |
+| **Resultado esperado** | HTTP 200 |
+| **Resultado obtenido** | ✅ HTTP 200 |
+| **Nota** | La API retorna `{"success":true}`, no el objeto actualizado. Se verifica solo el status code. |
+| **Cleanup** | Habitación eliminada tras el test |
+
+---
+
+### ROOM-012 · Actualizar habitación sin autenticación
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/rooms.spec.ts` |
+| **Endpoint** | `PUT /api/room/:id` |
+| **Tipo** | Negativo / Seguridad |
+| **Precondición** | Token admin · habitación previamente creada |
+| **Pasos** | 1. Crear habitación con token · 2. PUT sin cookie de autenticación |
+| **Resultado esperado** | HTTP 401 Unauthorized |
+| **Resultado obtenido** | ✅ HTTP 401 · recurso protegido correctamente |
+| **Cleanup** | Habitación eliminada con token válido tras el test |
+
+---
+
 ### ROOM-010 · Eliminar habitación sin autenticación
 | Campo | Detalle |
 |-------|---------|
@@ -329,6 +358,35 @@
 
 ---
 
+### BOOK-012 · Actualizar reserva con token válido
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/bookings.spec.ts` |
+| **Endpoint** | `PUT /api/booking/:id` |
+| **Tipo** | Positivo |
+| **Precondición** | Token admin · reserva creada (fechas 2027-05-01 / 2027-05-05) |
+| **Pasos** | 1. Crear reserva · 2. PUT `/api/booking/{id}` con token y **fechas distintas** a las originales (2027-06-01 / 2027-06-05) |
+| **Resultado esperado** | HTTP 200 |
+| **Resultado obtenido** | ✅ HTTP 200 |
+| **Nota** | La API retorna `{"success":true}`. Actualizar con las mismas fechas originales causa 409 — la plataforma las trata como conflicto consigo misma. Se usan fechas distintas para evitar este comportamiento conocido. |
+| **Cleanup** | Reserva eliminada tras el test |
+
+---
+
+### BOOK-013 · Actualizar reserva sin autenticación
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/api/bookings.spec.ts` |
+| **Endpoint** | `PUT /api/booking/:id` |
+| **Tipo** | Negativo / Seguridad |
+| **Precondición** | Token admin · reserva previamente creada |
+| **Pasos** | 1. Crear reserva con token · 2. PUT sin cookie de autenticación |
+| **Resultado esperado** | Código distinto de 200 |
+| **Resultado obtenido** | ✅ Acceso denegado |
+| **Cleanup** | Reserva eliminada con token válido tras el test |
+
+---
+
 ### BOOK-011 · Eliminar reserva sin autenticación
 | Campo | Detalle |
 |-------|---------|
@@ -412,6 +470,20 @@
 | **Resultado esperado** | Heading `h2` con texto "Booking Confirmed" visible |
 | **Resultado obtenido** | ✅ Confirmación mostrada |
 | **Cleanup** | `afterEach` elimina la reserva vía API (`DELETE /api/booking/:id`) |
+
+---
+
+### UI-BOOKING-003 · Intento de reserva en fechas ya ocupadas → sin confirmación
+| Campo | Detalle |
+|-------|---------|
+| **Archivo** | `tests/ui/booking.spec.ts` |
+| **Página** | `/reservation/{roomId}?checkin=<fecha_bloqueada>&checkout=<fecha_bloqueada>` |
+| **Tipo** | Negativo / Flujo de error |
+| **Precondición** | Fechas bloqueadas previamente via API · room ID obtenido dinámicamente |
+| **Pasos** | 1. Crear reserva via API para bloquear fechas · 2. Navegar a la misma URL con esas fechas · 3. Abrir formulario · 4. Llenar datos del huésped · 5. Enviar reserva |
+| **Resultado esperado** | Heading "Booking Confirmed" **no** visible tras el envío |
+| **Resultado obtenido** | ✅ Confirmación no aparece — conflicto de fechas manejado correctamente |
+| **Cleanup** | Reserva bloqueadora eliminada vía API tras el test |
 
 ---
 
