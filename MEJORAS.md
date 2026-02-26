@@ -155,17 +155,17 @@ await test.step('Verify confirmation heading', async () => { ... });
 
 ## Resumen de prioridades
 
-| # | Mejora | Impacto en portafolio | Dificultad |
-|---|--------|----------------------|------------|
-| 001 | Screenshot del reporte en README | 🔴 Alto | Baja |
-| 002 | GIF de tests corriendo | 🔴 Alto | Baja |
-| 003 | Tests negativos UI | 🟠 Medio | Media |
-| 004 | `roomid` dinámico | 🟠 Medio | Media |
-| 005 | PUT booking | 🟡 Bajo-medio | Baja |
-| 006 | PUT room | 🟡 Bajo-medio | Baja |
-| 007 | Variables de entorno | 🟠 Medio | Baja |
-| 008 | `test.step()` en UI | 🟠 Medio | Baja |
-| 009 | Allure Report público | 🔴 Alto | Media |
+| # | Mejora | Impacto en portafolio | Dificultad | Estado |
+|---|--------|----------------------|------------|--------|
+| 001 | Screenshot del reporte en README | 🔴 Alto | Baja | ⏳ Pendiente (manual) |
+| 002 | GIF de tests corriendo | 🔴 Alto | Baja | ⏳ Pendiente (manual) |
+| 003 | Tests negativos UI | 🟠 Medio | Media | ✅ Completado |
+| 004 | `roomid` dinámico | 🟠 Medio | Media | ✅ Completado |
+| 005 | PUT booking | 🟡 Bajo-medio | Baja | ✅ Completado |
+| 006 | PUT room | 🟡 Bajo-medio | Baja | ✅ Completado |
+| 007 | Variables de entorno | 🟠 Medio | Baja | ✅ Completado |
+| 008 | `test.step()` en UI | 🟠 Medio | Baja | ✅ Completado |
+| 009 | Allure Report público | 🔴 Alto | Media | ✅ Completado |
 
 ---
 

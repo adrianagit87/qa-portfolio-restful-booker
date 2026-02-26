@@ -107,9 +107,16 @@ npm run test:api
 # Solo UI (Chromium)
 npm run test:ui
 
-# Ver reporte HTML interactivo
+# Ver reporte HTML interactivo (Playwright nativo)
 npm run test:report
+
+# Ver reporte Allure (requiere Allure CLI instalado)
+npm run allure:generate
+npm run allure:open
 ```
+
+> **Reporte Allure público:** cada push a `main` genera y publica el reporte en
+> **[adrianagit87.github.io/qa-portfolio-restful-booker/allure-report](https://adrianagit87.github.io/qa-portfolio-restful-booker/allure-report)**
 
 ---
 
@@ -121,7 +128,8 @@ npm run test:report
 | [Casos de prueba — Web](docs/web-test-cases.md) | Casos UI manuales: navegación, contacto, reserva, admin |
 | [Casos de prueba — API](docs/api-test-cases.md) | Casos API manuales: auth, rooms, bookings |
 | [Reporte de bugs](docs/bug-reports.md) | 7 bugs de contrato API documentados con severidad |
-| [Tests automatizados](CASOS_DE_PRUEBA.md) | 34 casos automatizados con resultado y cleanup |
+| [Tests automatizados](CASOS_DE_PRUEBA.md) | 39 casos automatizados con resultado y cleanup |
+| [Allure Report](https://adrianagit87.github.io/qa-portfolio-restful-booker/allure-report) | Reporte interactivo publicado en GitHub Pages |
 
 ---
 

@@ -5,6 +5,10 @@ node_modules/
 playwright-report/
 test-results/
 
+# Allure output (generated locally)
+allure-results/
+allure-report/
+
 # OS
 .DS_Store
 
