@@ -17,6 +17,12 @@ Demostrar amplitud QA aplicada a un proyecto real:
 
 ---
 
+## 🎬 Demo
+
+![Tests running](docs/assets/demo.gif)
+
+---
+
 ## 📈 Reporte Allure
 
 [![Allure Report](docs/assets/allure-report.png)](https://adrianagit87.github.io/qa-portfolio-restful-booker/allure-report)
