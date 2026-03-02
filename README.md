@@ -172,3 +172,10 @@ Desarrollado por **Adriana Troche** — Senior QA Engineer con más de 15 años 
 ---
 
 *Stack: Playwright · TypeScript · GitHub Actions · Page Object Model*
+
+---
+
+## Proyecto relacionado
+
+[demoqa-screenplay](https://github.com/adrianagit87/demoqa-screenplay) — proyecto de portafolio
+complementario que implementa el patrón **Screenplay** desde cero (sin Serenity/JS) sobre DemoQA.
