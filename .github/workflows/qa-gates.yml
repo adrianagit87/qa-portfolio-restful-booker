@@ -1,0 +1,47 @@
+name: QA Gates
+
+# Copiá este archivo a .github/workflows/ del repositorio de tu suite.
+#
+# Los gates corren para todo el equipo, con cualquier herramienta de IA — y también
+# para quien ese día no usó ninguna. Por eso viven en el pipeline.
+#
+# El harness vive en su propio repositorio: este workflow lo trae al lado de la suite
+# y le indica qué revisar. Completá las dos variables de abajo.
+
+on:
+  push:
+    branches: [main, test/qa-gates]
+  pull_request:
+
+env:
+  # El repositorio del harness de tu equipo (tu fork o tu copia).
+  QA_HARNESS_REPO: adrianagit87/qa-automation-harness
+  # El archivo companies/<empresa>.json del harness con las excepciones del equipo.
+  QA_EMPRESA: _template
+
+jobs:
+  gates:
+    name: El método del equipo
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Si el repositorio del harness es privado, creá el secret QA_HARNESS_TOKEN con
+      # permiso de lectura sobre él. Si es público, no hace falta.
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ env.QA_HARNESS_REPO }}
+          path: .qa-harness
+          ssh-key: ${{ secrets.QA_HARNESS_SSH_KEY }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Primero: ¿los gates funcionan? Un gate roto que pasa en verde es peor que no tenerlo.
+      - name: Los gates hacen lo que dicen
+        run: node .qa-harness/gates/self-test.mjs
+
+      # Después: ¿la suite cumple el método acordado?
+      - name: La suite cumple el método
+        run: node .qa-harness/gates/run.mjs --suite . --config .qa-harness/companies/${{ env.QA_EMPRESA }}.json
