@@ -135,8 +135,9 @@ Usar como cookie: token=<valor>
 | **Endpoint** | `DELETE /api/room/:id` |
 | **Tipo** | Positivo |
 | **Auth** | Cookie token válido |
-| **Resultado esperado** | HTTP 200 |
+| **Resultado esperado** | HTTP 202 Accepted |
 | **Resultado obtenido** | ✅ Automatizado — pasando |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 200. Ver BUG-005, resuelto. |
 | **Estado** | ✅ Automatizado |
 
 ---
@@ -193,8 +194,9 @@ Usar como cookie: token=<valor>
 |-------|---------|
 | **Endpoint** | `DELETE /api/booking/:id` |
 | **Tipo** | Positivo |
-| **Resultado esperado** | HTTP 200 |
+| **Resultado esperado** | HTTP 202 Accepted |
 | **Resultado obtenido** | ✅ Automatizado — pasando |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 200. Ver BUG-005, resuelto. |
 | **Estado** | ✅ Automatizado |
 
 ---
@@ -261,8 +263,9 @@ Usar como cookie: token=<valor>
 | **Tipo** | Negativo / Seguridad |
 | **Auth** | Sin token |
 | **Pasos** | 1. Obtener un `roomid` válido · 2. DELETE sin cookie de autenticación |
-| **Resultado esperado** | HTTP 401 Unauthorized |
+| **Resultado esperado** | HTTP 403 Forbidden |
 | **Resultado obtenido** | |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 401. Ver BUG-012. |
 | **Estado** | ⬜ Pendiente |
 
 ---
@@ -339,8 +342,9 @@ Usar como cookie: token=<valor>
 | **Tipo** | Negativo / Seguridad |
 | **Auth** | Sin token |
 | **Pasos** | 1. Crear reserva · 2. DELETE sin cookie de autenticación |
-| **Resultado esperado** | HTTP 401 Unauthorized |
+| **Resultado esperado** | HTTP 403 Forbidden |
 | **Resultado obtenido** | |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 401. Ver BUG-012. |
 | **Estado** | ⬜ Pendiente |
 | **Cleanup** | Eliminar la reserva vía API con token si el test falla |
 

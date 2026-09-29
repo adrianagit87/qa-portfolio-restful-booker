@@ -124,8 +124,9 @@
 | **Tipo** | Positivo |
 | **Precondición** | Token admin · habitación previamente creada |
 | **Pasos** | 1. Crear habitación · 2. Obtener su `roomid` · 3. DELETE `/api/room/{id}` con token |
-| **Resultado esperado** | HTTP 200 |
-| **Resultado obtenido** | ✅ HTTP 200 · habitación eliminada |
+| **Resultado esperado** | HTTP 202 Accepted |
+| **Resultado obtenido** | ✅ HTTP 202 · habitación eliminada |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 200. Ver BUG-005, resuelto. |
 
 ---
 
@@ -191,9 +192,9 @@
 | **Tipo** | Positivo |
 | **Precondición** | Token admin · habitación previamente creada |
 | **Pasos** | 1. Crear habitación · 2. PUT `/api/room/{id}` con token y datos actualizados (`roomPrice: 200`) |
-| **Resultado esperado** | HTTP 200 |
-| **Resultado obtenido** | ✅ HTTP 200 |
-| **Nota** | La API retorna `{"success":true}`, no el objeto actualizado. Se verifica solo el status code. |
+| **Resultado esperado** | HTTP 202 Accepted · body con la habitación actualizada (`roomPrice: 200`) |
+| **Resultado obtenido** | ✅ HTTP 202 · precio actualizado verificado en la respuesta |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 200 con `{"success":true}`. Ahora retorna el objeto actualizado, y el test verifica el precio. |
 | **Cleanup** | Habitación eliminada tras el test |
 
 ---
@@ -206,8 +207,9 @@
 | **Tipo** | Negativo / Seguridad |
 | **Precondición** | Token admin · habitación previamente creada |
 | **Pasos** | 1. Crear habitación con token · 2. PUT sin cookie de autenticación |
-| **Resultado esperado** | HTTP 401 Unauthorized |
-| **Resultado obtenido** | ✅ HTTP 401 · recurso protegido correctamente |
+| **Resultado esperado** | HTTP 403 Forbidden |
+| **Resultado obtenido** | ✅ HTTP 403 · recurso protegido correctamente |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 401. Ver BUG-012. |
 | **Cleanup** | Habitación eliminada con token válido tras el test |
 
 ---
@@ -220,8 +222,9 @@
 | **Tipo** | Negativo / Seguridad |
 | **Precondición** | Token admin · habitación previamente creada |
 | **Pasos** | 1. Crear habitación con token · 2. DELETE sin enviar cookie de autenticación |
-| **Resultado esperado** | HTTP 401 Unauthorized |
-| **Resultado obtenido** | ✅ HTTP 401 · recurso protegido correctamente |
+| **Resultado esperado** | HTTP 403 Forbidden |
+| **Resultado obtenido** | ✅ HTTP 403 · recurso protegido correctamente |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 401. Ver BUG-012. |
 | **Cleanup** | Habitación eliminada con token válido tras el test |
 
 ---
@@ -287,8 +290,9 @@
 | **Tipo** | Positivo |
 | **Precondición** | Token admin · reserva previamente creada (fechas 2026-09-01 / 2026-09-05) |
 | **Pasos** | 1. Crear reserva · 2. DELETE `/api/booking/{bookingid}` con token |
-| **Resultado esperado** | HTTP 200 |
-| **Resultado obtenido** | ✅ HTTP 200 · reserva eliminada |
+| **Resultado esperado** | HTTP 202 Accepted |
+| **Resultado obtenido** | ✅ HTTP 202 · reserva eliminada |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 200. Ver BUG-005, resuelto. |
 
 ---
 
@@ -395,8 +399,9 @@
 | **Tipo** | Negativo / Seguridad |
 | **Precondición** | Token admin · reserva previamente creada |
 | **Pasos** | 1. Crear reserva con token · 2. DELETE sin enviar cookie de autenticación |
-| **Resultado esperado** | HTTP 401 Unauthorized |
-| **Resultado obtenido** | ✅ HTTP 401 · recurso protegido correctamente |
+| **Resultado esperado** | HTTP 403 Forbidden |
+| **Resultado obtenido** | ✅ HTTP 403 · recurso protegido correctamente |
+| **Nota** | **Cambio de la API (septiembre 2026):** hasta marzo 2026 respondía HTTP 401. Ver BUG-012. |
 | **Cleanup** | Reserva eliminada con token válido tras el test |
 
 ---

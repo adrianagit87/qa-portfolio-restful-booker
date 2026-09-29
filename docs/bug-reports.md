@@ -11,7 +11,10 @@
 
 | Total bugs | Críticos | Altos | Medios | Bajos |
 |-----------|---------|-------|--------|-------|
-| 11 | 0 | 3 | 5 | 3 |
+| 12 | 0 | 3 | 5 | 4 |
+
+**Revalidación septiembre 2026:** la API cambió de comportamiento. BUG-005 quedó resuelto y apareció
+BUG-012. El resto sigue abierto.
 
 ---
 
@@ -108,7 +111,8 @@
 | **Resultado esperado** | HTTP 202 |
 | **Resultado obtenido** | HTTP 200 |
 | **Afecta** | `DELETE /api/room/:id` y `DELETE /api/booking/:id` |
-| **Estado** | 🟡 Abierto |
+| **Revalidación** | Septiembre 2026: el servidor retorna HTTP 202, como indica la documentación. `PUT /api/room/:id` también retorna 202. Los tests se actualizaron al nuevo código. |
+| **Estado** | ✅ Resuelto (septiembre 2026) |
 
 ---
 
@@ -141,6 +145,24 @@
 | **Pasos para reproducir** | 1. `POST /api/booking` con body sin `roomid` |
 | **Resultado esperado** | HTTP 201 con reserva creada |
 | **Resultado obtenido** | Error — campo `roomid` requerido |
+| **Estado** | 🟡 Abierto |
+
+---
+
+### BUG-012 · Código inconsistente para requests sin autenticación según el método HTTP
+| Campo | Detalle |
+|-------|---------|
+| **ID** | BUG-012 |
+| **Módulo** | API — Habitaciones / Reservas |
+| **Severidad** | 🔵 Bajo |
+| **Tipo** | Bug de contrato API |
+| **Fecha** | Septiembre 2026 |
+| **Descripción** | Un request sin token recibe HTTP 401 en `POST` y `GET`, pero HTTP 403 en `PUT` y `DELETE`. Hasta marzo 2026 todos respondían 401. Un cliente no puede tratar "sin autenticación" de forma uniforme. |
+| **Pasos para reproducir** | 1. `POST /api/room` sin cookie → 401 · 2. `PUT /api/room/{id}` sin cookie → 403 · 3. `DELETE /api/room/{id}` sin cookie → 403 |
+| **Resultado esperado** | El mismo código para la misma condición (sin autenticación) en todos los métodos |
+| **Resultado obtenido** | 401 en `POST`/`GET` · 403 en `PUT`/`DELETE` |
+| **Afecta** | `PUT /api/room/:id`, `DELETE /api/room/:id`, `DELETE /api/booking/:id` |
+| **Detectado por** | Regresión de la suite automatizada: ROOM-010, ROOM-012 y BOOK-011 empezaron a fallar |
 | **Estado** | 🟡 Abierto |
 
 ---

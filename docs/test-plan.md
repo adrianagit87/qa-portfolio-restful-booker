@@ -51,7 +51,7 @@ Se aplica un modelo de **pirámide de pruebas**: mayor cobertura en API (más r�
 
 **Pruebas funcionales negativas** — verifican el comportamiento del sistema ante datos inválidos, campos vacíos y combinaciones incorrectas.
 
-**Pruebas de seguridad básica** — validan que los endpoints protegidos rechazan requests sin autenticación (HTTP 401).
+**Pruebas de seguridad básica** — validan que los endpoints protegidos rechazan requests sin autenticación (HTTP 401 o 403 según el método, ver BUG-012).
 
 **Validación de schema** — verifican que la estructura de respuesta de la API cumple el contrato esperado (tipos de datos, campos requeridos).
 
@@ -145,9 +145,10 @@ Durante la implementación se identificaron diferencias entre la documentación 
 | Código de error — password incorrecto | 403 | 401 |
 | Código de error — POST sin auth | 403 | 401 |
 | Respuesta al crear habitación | 201 + objeto room | 200 + `{"success":true}` |
-| Código al eliminar recursos | 202 | 200 |
+| Código al eliminar recursos | 202 | 200 → **202 desde septiembre 2026** (BUG-005 resuelto) |
 | GET /api/booking | Sin parámetros | Requiere `?roomid=<id>` |
 | POST /api/booking | Sin roomid | Requiere campo `roomid` |
+| `PUT`/`DELETE` sin auth | 403 | 401 → **403 desde septiembre 2026**, mientras `POST`/`GET` siguen en 401 (BUG-012) |
 
 > Estos hallazgos demuestran la importancia de la exploración previa y el valor del QA como primera línea de validación del contrato API.
 
