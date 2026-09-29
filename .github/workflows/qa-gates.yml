@@ -10,7 +10,7 @@ name: QA Gates
 
 on:
   push:
-    branches: [main, test/qa-gates]
+    branches: [main]
   pull_request:
 
 env:
