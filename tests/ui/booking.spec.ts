@@ -87,7 +87,7 @@ test.describe('Booking widget — UI tests', () => {
 
     await test.step('Submit booking and verify confirmation', async () => {
       await homePage.submitBooking();
-      await homePage.verifyConfirmation();
+      await expect(homePage.confirmationHeading).toBeVisible({ timeout: 15_000 });
     });
   });
 

@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 /**
  * Page Object for the Contact section on the Restful-Booker home page.
@@ -64,31 +64,5 @@ export class ContactPage {
    */
   async submit() {
     await this.submitButton.click();
-  }
-
-  /**
-   * Asserts the success heading is visible after a valid submission.
-   */
-  async verifySuccess() {
-    await expect(this.successHeading).toBeVisible({ timeout: 10_000 });
-    await expect(this.successHeading).toContainText('Thanks for getting in touch');
-  }
-
-  /**
-   * Asserts that the error alert contains specific text.
-   */
-  async verifyError(text: string | RegExp) {
-    await expect(this.errorAlert).toBeVisible({ timeout: 5_000 });
-    await expect(this.errorAlert).toContainText(text);
-  }
-
-  /**
-   * Asserts that the error alert is visible (multiple validation errors present).
-   */
-  async verifyMultipleErrors() {
-    await expect(this.errorAlert).toBeVisible({ timeout: 5_000 });
-    // The alert contains multiple error messages concatenated — at least 50 chars
-    const text = await this.errorAlert.textContent();
-    expect((text ?? '').length).toBeGreaterThan(50);
   }
 }

@@ -1,4 +1,4 @@
-import { Page, Locator, expect } from '@playwright/test';
+import { Page, Locator } from '@playwright/test';
 
 /**
  * Page Object for the Restful-Booker reservation page.
@@ -69,12 +69,5 @@ export class HomePage {
    */
   async submitBooking() {
     await this.reserveNowButton.click();
-  }
-
-  /**
-   * Asserts that the booking confirmation heading is visible.
-   */
-  async verifyConfirmation() {
-    await expect(this.confirmationHeading).toBeVisible({ timeout: 15_000 });
   }
 }
