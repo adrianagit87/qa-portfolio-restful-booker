@@ -135,32 +135,36 @@ test.describe('PUT /api/room/:id — Update room', () => {
     token = await getAuthToken(request);
   });
 
-  test('ROOM-011 · update room with valid token → 200', async ({ request }) => {
+  test('ROOM-011 · update room with valid token → 202', async ({ request }) => {
     const room = await createRoom(request, token);
     const roomId = room['roomid'] as number;
 
-    const response = await request.put(`/api/room/${roomId}`, {
-      headers: { Cookie: `token=${token}` },
-      data: { ...VALID_ROOM, roomName: `Updated-${Date.now()}`, roomPrice: 200 },
-    });
+    try {
+      const response = await request.put(`/api/room/${roomId}`, {
+        headers: { Cookie: `token=${token}` },
+        data: { ...VALID_ROOM, roomName: `Updated-${Date.now()}`, roomPrice: 200 },
+      });
 
-    // API returns {"success":true} — not the updated room object
-    expect(response.status()).toBe(200);
-
-    await deleteRoom(request, token, roomId).catch(() => {});
+      // API returns 202 Accepted with the updated room object
+      expect(response.status()).toBe(202);
+      expect((await response.json())['roomPrice']).toBe(200);
+    } finally {
+      await deleteRoom(request, token, roomId).catch(() => {});
+    }
   });
 
-  test('ROOM-012 · update room without auth token → 401', async ({ request }) => {
+  test('ROOM-012 · update room without auth token → 403', async ({ request }) => {
     const room = await createRoom(request, token);
     const roomId = room['roomid'] as number;
 
-    const response = await request.put(`/api/room/${roomId}`, {
-      data: { ...VALID_ROOM, roomPrice: 200 },
-    });
-
-    expect(response.status()).toBe(401);
-
-    await deleteRoom(request, token, roomId).catch(() => {});
+    try {
+      const response = await request.put(`/api/room/${roomId}`, {
+        data: { ...VALID_ROOM, roomPrice: 200 },
+      });
+      expect(response.status()).toBe(403);
+    } finally {
+      await deleteRoom(request, token, roomId).catch(() => {});
+    }
   });
 });
 
@@ -172,23 +176,26 @@ test.describe('DELETE /api/room/:id — Delete room', () => {
     token = await getAuthToken(request);
   });
 
-  test('delete a just-created room → 200', async ({ request }) => {
+  test('delete a just-created room → 202', async ({ request }) => {
     const room = await createRoom(request, token);
     const roomId = room['roomid'] as number;
 
     const response = await request.delete(`/api/room/${roomId}`, {
       headers: { Cookie: `token=${token}` },
     });
-    expect(response.status()).toBe(200);
+    // The API accepts the deletion with 202 Accepted
+    expect(response.status()).toBe(202);
   });
 
-  test('ROOM-010 · delete without auth token → 401', async ({ request }) => {
+  test('ROOM-010 · delete without auth token → 403', async ({ request }) => {
     const room = await createRoom(request, token);
     const roomId = room['roomid'] as number;
 
-    const response = await request.delete(`/api/room/${roomId}`);
-    expect(response.status()).toBe(401);
-
-    await deleteRoom(request, token, roomId).catch(() => {});
+    try {
+      const response = await request.delete(`/api/room/${roomId}`);
+      expect(response.status()).toBe(403);
+    } finally {
+      await deleteRoom(request, token, roomId).catch(() => {});
+    }
   });
 });
